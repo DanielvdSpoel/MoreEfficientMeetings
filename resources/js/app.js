@@ -11,18 +11,18 @@ createInertiaApp({
         return pages[`./Pages/${name}.vue`]
     },
     setup({ el, App, props, plugin }) {
-        const messages = JSON.parse(props.initialPage.props.translations);
-
-        const i18n = createI18n({
-            locale: 'nl',
-            fallbackLocale: 'en',
-            globalInjection: true,
-            messages,
-        })
+        // const messages = JSON.parse(props.initialPage.props.translations);
+        //
+        // const i18n = createI18n({
+        //     locale: 'nl',
+        //     fallbackLocale: 'en',
+        //     globalInjection: true,
+        //     messages,
+        // })
 
         createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(i18n)
+            // .use(i18n)
             .mixin({ methods: { route } })
             .mount(el)
     },
