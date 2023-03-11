@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AIAdviseController;
 use App\Http\Controllers\MeetingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
@@ -30,5 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('meetings')->name('meetings.')->group(function () {
         Route::get('/', [MeetingController::class, 'index'])->name('index');
         Route::get('/create', [MeetingController::class, 'create'])->name('create');
+    });
+
+    Route::prefix('/ai')->name('ai.')->group(function () {
+        Route::get('/should-this-be-a-meeting', [AIAdviseController::class, 'shouldThisBeAMeeting'])->name('should-this-be-a-meeting');
     });
 });

@@ -2,7 +2,7 @@
     <div>
         <Navbar/>
         <div class="m-8">
-            <slot/>
+            <slot name="content"/>
         </div>
     </div>
 </template>

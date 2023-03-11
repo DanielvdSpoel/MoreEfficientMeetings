@@ -35,7 +35,7 @@
                             <div>
                                 <MenuButton class="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     <span class="sr-only">Open user menu</span>
-                                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                    <img class="h-8 w-8 rounded-full" :src="'https://ui-avatars.com/api/?name=' + user.name + '&background=e5e7eb'" alt="" />
                                 </MenuButton>
                             </div>
                             <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
@@ -63,11 +63,11 @@
             <div class="border-t border-gray-200 pt-4 pb-3">
                 <div class="flex items-center px-4 sm:px-6">
                     <div class="flex-shrink-0">
-                        <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                        <img class="h-10 w-10 rounded-full" :src="'https://ui-avatars.com/api/?name=' + user.name + '&background=e5e7eb'" alt="" />
                     </div>
                     <div class="ml-3">
-                        <div class="text-base font-medium text-gray-800">Tom Cook</div>
-                        <div class="text-sm font-medium text-gray-500">tom@example.com</div>
+                        <div class="text-base font-medium text-gray-800">{{ user.name }}</div>
+                        <div class="text-sm font-medium text-gray-500">{{ user.email }}</div>
                     </div>
                 </div>
                 <div class="mt-3 space-y-1">
@@ -101,7 +101,13 @@ export default {
         XMarkIcon,
         PlusIcon,
         Link,
-    }
+    },
+    computed: {
+        user() {
+            console.log(this.$page.props)
+            return this.$page.props.user
+        },
+    },
 }
 </script>
 
