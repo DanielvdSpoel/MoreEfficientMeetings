@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Notifications/>
         <Navbar/>
         <div class="m-8">
             <slot name="content"/>
@@ -9,9 +10,10 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
+import Notifications from "@/components/Notifications.vue";
 export default {
 name: "BaseLayout",
-    components: {Navbar}
+    components: {Notifications, Navbar}
 }
 </script>
 

@@ -6,6 +6,7 @@ use App\Http\Requests\CreateAvailabilityRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Department;
 use App\Models\Skill;
+use App\Supports\NotificationSupport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -47,12 +48,15 @@ class ProfileController extends Controller
         $data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
         $request->user()->availabilities()->create($data);
 
+        NotificationSupport::sendSuccessNotification('Success!', 'Availability added successfully');
         return redirect()->route('profile')->with('success', 'Availability added successfully');
     }
 
     public function deleteAvailability(Request $request, $id)
     {
         $request->user()->availabilities()->findOrFail($id)->delete();
+
+        NotificationSupport::sendSuccessNotification('Success!', 'Availability deleted successfully');
 
         return redirect()->route('profile')->with('success', 'Availability deleted successfully');
     }

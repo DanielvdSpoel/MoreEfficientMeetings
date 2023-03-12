@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
 
         return array_merge(parent::share($request), [
             'translations' => $translationSupport->getTranslationStrings(),
+            'messages' => $request->session()->pull('messages', []),
             'user' => fn () => $request->user()
                 ? $request->user()->only('id', 'name', 'email')
                 : null,

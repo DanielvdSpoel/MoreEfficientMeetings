@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMeetingRequest;
 use App\Models\Availability;
 use App\Models\User;
+use App\Supports\NotificationSupport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -34,6 +35,8 @@ class MeetingController extends Controller
 
         $meeting = $request->user()->organizedMeetings()->create($data);
         $meeting->attendees()->sync($attendees);
+
+        NotificationSupport::sendSuccessNotification('Success!', 'Meeting created successfully');
 
         return redirect()->route('meetings.index')->with('success', 'Meeting created successfully');
     }

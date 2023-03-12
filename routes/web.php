@@ -25,7 +25,8 @@ Route::middleware('guest')->group(function() {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', ScheduleController::class)->name('schedule');
+    Route::redirect('/', '/meetings');
+    //Route::get('/', ScheduleController::class)->name('schedule');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
