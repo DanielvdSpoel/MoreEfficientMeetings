@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Meeting extends Model
 {
@@ -15,6 +16,11 @@ class Meeting extends Model
         'description',
         'date',
         'start_time',
-        'end_time',
+        'duration',
     ];
+
+    public function attendees(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

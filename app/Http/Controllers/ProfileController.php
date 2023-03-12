@@ -43,8 +43,8 @@ class ProfileController extends Controller
     public function addAvailability(CreateAvailabilityRequest $request)
     {
         $data = $request->validated();
-        $data['date'] = "2021-01-01";
-        //$data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
+        //$data['date'] = "2021-01-01";
+        $data['date'] = Carbon::createFromFormat('d-m-Y', $data['date'])->format('Y-m-d');
         $request->user()->availabilities()->create($data);
 
         return redirect()->route('profile')->with('success', 'Availability added successfully');

@@ -159,16 +159,43 @@
 
                     </div>
                     <div v-if="step === 3">
+                        <InputField
+                            label="Meeting duration (in minutes)"
+                            type="number"
+                            :min="0"
+                            v-model="form.duration"
+                            name="duration"
+
+                        />
                         <div class="grid grid-cols-4 gap-4">
                             <div class="col-span-3">
-                                <DateField label="Find availibility before"/>
+                                <DateField
+                                    label="Find availibility before"
+                                    v-model="date_range"
+                                    name="date"
+                                />
                             </div>
-                            <div class="mt-5">
-                                <button class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            <div class="mt-7">
+                                <button @click="checkAvailability"
+                                    class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                                     Find best time and date
                                 </button>
                             </div>
                         </div>
+
+                        <div v-if="availability">
+                            <h3 class="text-sm font-medium leading-6 text-gray-900 mt-4">Availability:</h3>
+                            <div v-if="availability.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                                <AvailabilitySelectorCard v-for="availability in availability" :key="availability.id" @selected="selectAvailability"
+                                                          :attendees="attendees" :requiredAttendees="form.attendees" :selectedAvailability="form.selectedAvailability" :availability="availability"/>
+                            </div>
+                            <div v-else>
+                                <p class="text-sm text-red-500 cursor-pointer">
+                                    No availability found
+                                </p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="px-4 py-3 sm:px-5 flex justify-between">
@@ -176,9 +203,13 @@
                             class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Previous step
                     </button>
-                    <button @click="step++" :disabled="step === 3"
+                    <button @click="step++" v-if="step !== 3" :disabled="step === 3"
                             class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                         Next step
+                    </button>
+                    <button v-if="step === 3" @click="submitForm"
+                            class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Create meeting
                     </button>
                 </div>
             </div>
@@ -190,7 +221,7 @@
 import BaseLayout from "@/layouts/BaseLayout.vue";
 import InputField from "@/components/fields/InputField.vue";
 import TextareaField from "@/components/fields/TextareaField.vue";
-import {useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import {
     ArrowPathIcon,
     ChevronUpDownIcon,
@@ -202,10 +233,12 @@ import {
 import {Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions} from "@headlessui/vue";
 import Steps from "@/components/Steps.vue";
 import DateField from "@/components/fields/DateField.vue";
+import AvailabilitySelectorCard from "@/components/AvailabilitySelectorCard.vue";
 
 export default {
     name: "Create",
     components: {
+        AvailabilitySelectorCard,
         DateField,
         Steps,
         ComboboxOption,
@@ -235,8 +268,14 @@ export default {
             form: useForm({
                 title: '',
                 description: '',
+                date: '',
+                duration: '',
+                start_time: '',
                 attendees: [],
+                selectedAvailability: null,
             }),
+            availability: null,
+            date_range: null,
             shouldThisBeAMeetingData: {
                 loading: false,
                 result: null,
@@ -251,7 +290,6 @@ export default {
                 filteredUsers: [],
             },
             step: 1,
-
         }
     },
     watch: {
@@ -260,6 +298,15 @@ export default {
         }
     },
     methods: {
+        checkAvailability() {
+            window.axios.get(route('meetings.availability-check') + '?date=' + this.date_range + '&duration=' + this.form.duration + '&attendees=' + this.form.attendees.map(a => a.id).join(','))
+                .then(response => {
+                    console.log(response.data)
+                    this.availability = response.data
+                })
+                .catch(error => console.log(error))
+
+        },
         setStep(step) {
             this.step = step
         },
@@ -308,6 +355,23 @@ export default {
                     this.attendeesSuggestionData.loading = false
                     this.attendeesSuggestionData.text = "Want some more suggestions for attendees?"
                 });
+        },
+        selectAvailability(availability) {
+            this.form.selectedAvailability = availability
+        },
+        submitForm() {
+            this.form
+                .transform((data) => ({
+                    title: data.title,
+                    description: data.description,
+                    date: data.selectedAvailability.date,
+                    duration: data.duration,
+                    start_time: data.selectedAvailability.start_time,
+                    attendees: data.attendees.map(a => a.id),
+                }))
+                .post(route('meetings.store'), {
+
+            })
         }
 
     }

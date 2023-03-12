@@ -11,13 +11,14 @@
                             <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
                         </DisclosureButton>
                     </div>
-                    <div class="flex flex-shrink-0 items-center">
-                        <img class="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
-                        <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+                    <div class="flex flex-shrink-0 text-2xl items-center">
+                        <img class="h-8 w-auto" src="/img/logo.png"/>
+<!--                        <i class="fa-solid fa-business-time text-primary-600"></i>-->
+<!--                        <img class="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />-->
+<!--                        <img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />-->
                     </div>
                     <div class="hidden md:ml-6 md:flex md:space-x-8">
                         <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-                        <Link :href="route('schedule')" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium" :class="{ 'border-indigo-500 text-gray-900': $page.url === '/', 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': $page.url === '' }">Schedule</Link>
                         <Link :href="route('meetings.index')" class="inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium" :class="{ 'border-indigo-500 text-gray-900': $page.url.startsWith('/meetings'), 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': !$page.url.startsWith('/meetings') }">Meetings</Link>
                     </div>
                 </div>
@@ -57,8 +58,7 @@
         <DisclosurePanel class="md:hidden">
             <div class="space-y-1 pt-2 pb-3">
                 <!-- Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700" -->
-                <DisclosureButton as="a" href="#" class="block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700 sm:pl-5 sm:pr-6">Schedule</DisclosureButton>
-                <DisclosureButton as="a" href="#" class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6">Meetings</DisclosureButton>
+                <DisclosureButton as="a" href="/meetings" class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 sm:pl-5 sm:pr-6">Meetings</DisclosureButton>
             </div>
             <div class="border-t border-gray-200 pt-4 pb-3">
                 <div class="flex items-center px-4 sm:px-6">

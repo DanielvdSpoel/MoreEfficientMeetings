@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
-            <img class="mx-auto h-24 w-auto" src="/images/logo-transparant.png" alt="KwekerijVH logo" />
+            <img class="mx-auto h-24 w-auto" src="/img/logo_long.png" alt="KwekerijVH logo" />
             <slot name="title"></slot>
             <slot name="subtitle"></slot>
         </div>

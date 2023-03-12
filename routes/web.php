@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('meetings')->name('meetings.')->group(function () {
         Route::get('/availability-check', [MeetingController::class, 'availabilityCheck'])->name('availability-check');
         Route::get('/', [MeetingController::class, 'index'])->name('index');
+        Route::post('/', [MeetingController::class, 'store'])->name('store');
         Route::get('/create', [MeetingController::class, 'create'])->name('create');
     });
 
