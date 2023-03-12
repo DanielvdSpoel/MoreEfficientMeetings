@@ -17,4 +17,8 @@ class MeetingController extends Controller
             'attendees' => User::with('skills')->get(),
         ]);
     }
+
+    public function availabilityCheck(Request $request) {
+        dd($request->all());
+    }
 }

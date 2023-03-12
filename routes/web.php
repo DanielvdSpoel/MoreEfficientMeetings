@@ -26,9 +26,14 @@ Route::middleware('guest')->group(function() {
 
 Route::middleware('auth')->group(function () {
     Route::get('/', ScheduleController::class)->name('schedule');
-    Route::get('/profile', ProfileController::class)->name('profile');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/availability', [ProfileController::class, 'addAvailability'])->name('profile.availability.add');
+    Route::delete('/profile/availability/{id}', [ProfileController::class, 'deleteAvailability'])->name('profile.availability.delete');
 
     Route::prefix('meetings')->name('meetings.')->group(function () {
+        Route::get('/availability-check', [MeetingController::class, 'availabilityCheck'])->name('availability-check');
         Route::get('/', [MeetingController::class, 'index'])->name('index');
         Route::get('/create', [MeetingController::class, 'create'])->name('create');
     });
