@@ -3,17 +3,7 @@
         <template v-slot:content>
             <h4 class="sr-only">Status</h4>
             <h1 class="font-medium text-xl text-gray-900">Creating a new meeting</h1>
-            <div class="mt-6" aria-hidden="true">
-                <div class="overflow-hidden rounded-full bg-gray-200">
-                    <div class="h-2 rounded-full bg-indigo-600" style="width: 37.5%"/>
-                </div>
-                <div class="mt-2 hidden grid-cols-3 text-sm font-medium text-gray-600 sm:grid">
-                    <div class="text-indigo-600">Meeting details</div>
-                    <div class="text-center text-indigo-600">Attendees</div>
-                    <div class="text-center">Date and time</div>
-                </div>
-            </div>
-
+            <Steps :currentStep="step" @setStep="setStep"/>
             <div class="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow mt-6">
                 <div class="px-4 py-3 sm:p-5 gap-2">
                     <div v-if="step === 1">
@@ -105,7 +95,7 @@
                                                                 {{ attendee.role}}
                                                             </p>
                                                             <p class="mt-2 flex items-center text-sm text-gray-500">
-                                                                {{ attendee.skills.join(', ') }}
+                                                                {{ getSkills(attendee) }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -118,6 +108,66 @@
                                     </div>
                                 </li>
                             </ul>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <ArrowPathIcon v-if="attendeesSuggestionData.loading"
+                                           class="mt-1 text-indigo-500 h-4 w-4 animate-spin"/>
+                            <button class="text-sm text-indigo-500 hover:text-indigo-700 underline cursor-pointer"
+                                    :disabled="attendeesSuggestionData.loading" @click="getAttendeeSuggestions">
+                                {{ attendeesSuggestionData.text }}
+                            </button>
+                        </div>
+                        <div v-if="attendeesSuggestionData.result.length > 0" class="overflow-hidden mt-4 sm:rounded-md">
+                            <p class="block text-sm font-medium leading-6 text-gray-900">
+                                Suggested attendees
+                            </p>
+                            <ul role="list" class="divide-y divide-gray-200">
+                                <li v-for="attendee in attendeesSuggestionData.result" :key="attendee.id">
+                                    <div class="block group hover:bg-gray-50 cursor-pointer" @click="addAttendee(attendee)">
+                                        <div class="flex items-center px-4 py-4 sm:px-6">
+                                            <div class="flex min-w-0 flex-1 items-center">
+                                                <div class="flex-shrink-0">
+                                                    <img class="h-12 w-12 rounded-full" :src="'https://ui-avatars.com/api/?name=' + attendee.name + '&background=e5e7eb'" alt="" />
+                                                </div>
+                                                <div class="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
+                                                    <div>
+                                                        <p class="truncate text-sm font-medium text-indigo-600">{{ attendee.name }}</p>
+                                                        <p class="mt-2 flex items-center text-sm text-gray-500">
+                                                            <span>{{ attendee.reason }}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="hidden md:block">
+                                                        <div>
+                                                            <p class="text-sm text-gray-900">
+                                                                {{ attendee.role }}
+                                                            </p>
+                                                            <p class="mt-2 flex items-center text-sm text-gray-500">
+                                                                {{ attendee.email }}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <PlusCircleIcon class="h-5 w-5 text-green-600 hover:text-green-700 group-hover:text-green-700" aria-hidden="true" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div v-if="step === 3">
+                        <div class="grid grid-cols-4 gap-4">
+                            <div class="col-span-3">
+                                <DateField label="Find availibility before"/>
+                            </div>
+                            <div class="mt-5">
+                                <button class="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    Find best time and date
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,12 +191,23 @@ import BaseLayout from "@/layouts/BaseLayout.vue";
 import InputField from "@/components/fields/InputField.vue";
 import TextareaField from "@/components/fields/TextareaField.vue";
 import {useForm} from "@inertiajs/vue3";
-import {ArrowPathIcon, ChevronUpDownIcon, CheckIcon, TrashIcon, EnvelopeIcon} from "@heroicons/vue/20/solid";
+import {
+    ArrowPathIcon,
+    ChevronUpDownIcon,
+    CheckIcon,
+    TrashIcon,
+    EnvelopeIcon,
+    PlusCircleIcon
+} from "@heroicons/vue/20/solid";
 import {Combobox, ComboboxButton, ComboboxInput, ComboboxLabel, ComboboxOption, ComboboxOptions} from "@headlessui/vue";
+import Steps from "@/components/Steps.vue";
+import DateField from "@/components/fields/DateField.vue";
 
 export default {
     name: "Create",
     components: {
+        DateField,
+        Steps,
         ComboboxOption,
         ComboboxOptions,
         Combobox,
@@ -161,6 +222,7 @@ export default {
         ChevronUpDownIcon,
         TrashIcon,
         EnvelopeIcon,
+        PlusCircleIcon,
     },
     props: {
         attendees: {
@@ -179,6 +241,11 @@ export default {
                 loading: false,
                 result: null,
             },
+            attendeesSuggestionData: {
+                loading: false,
+                result: [],
+                text: "Want some suggestions for attendees?",
+            },
             combobox: {
                 query: '',
                 filteredUsers: [],
@@ -193,6 +260,22 @@ export default {
         }
     },
     methods: {
+        setStep(step) {
+            this.step = step
+        },
+        addAttendee(attendee) {
+            if (!this.form.attendees.find(a => a.id === attendee.id)) {
+                this.form.attendees.push(attendee)
+                this.attendeesSuggestionData.result = this.attendeesSuggestionData.result.filter(a => a.id !== attendee.id)
+            }
+        },
+        getSkills(attendee) {
+            const skills = []
+            attendee.skills.forEach(skill => {
+                skills.push(skill.name)
+            })
+            return skills.join(', ')
+        },
         removeAttendee(attendee) {
             this.form.attendees = this.form.attendees.filter(a => a.id !== attendee.id)
         },
@@ -201,12 +284,32 @@ export default {
             window.axios.get(route('ai.should-this-be-a-meeting') + '?title=' + this.form.title + '&description=' + this.form.description)
                 .then(response => {
                     this.shouldThisBeAMeetingData.result = response.data.choices[0].text
-                    this.shouldThisBeAMeetingData.loading = false
                 })
                 .finally(() => {
                     this.shouldThisBeAMeetingData.loading = false
                 });
+        },
+        getAttendeeSuggestions() {
+            this.attendeesSuggestionData.loading = true
+            window.axios.get(route('ai.suggest-attendees') + '?title=' + this.form.title + '&description=' + this.form.description)
+                .then(response => {
+                    const temp = response.data.choices[0].text
+                    temp.replace(/(\r\n|\n|\r)/gm, " ")
+                    console.log(temp)
+
+                    const data = JSON.parse(temp)
+                    Object.keys(data).forEach(key => {
+                        const attendee = this.attendees.find(attendee => attendee.name === key)
+                        attendee.reason = data[key]
+                        this.attendeesSuggestionData.result.push(attendee);
+                    })
+                })
+                .finally(() => {
+                    this.attendeesSuggestionData.loading = false
+                    this.attendeesSuggestionData.text = "Want some more suggestions for attendees?"
+                });
         }
+
     }
 }
 </script>

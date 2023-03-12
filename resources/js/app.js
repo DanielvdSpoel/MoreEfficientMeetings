@@ -4,6 +4,7 @@ import {createInertiaApp} from "@inertiajs/vue3";
 
 import { createApp, h } from 'vue'
 import { createI18n } from 'vue-i18n'
+import VueClickAway from "vue3-click-away";
 
 createInertiaApp({
     resolve: name => {
@@ -22,6 +23,7 @@ createInertiaApp({
 
         createApp({ render: () => h(App, props) })
             .use(plugin)
+        .use(VueClickAway)
             // .use(i18n)
             .mixin({ methods: { route } })
             .mount(el)

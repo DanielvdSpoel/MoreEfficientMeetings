@@ -35,5 +35,6 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('/ai')->name('ai.')->group(function () {
         Route::get('/should-this-be-a-meeting', [AIAdviseController::class, 'shouldThisBeAMeeting'])->name('should-this-be-a-meeting');
+        Route::get('/suggest-attendees', [AIAdviseController::class, 'getSuggestedAttendees'])->name('suggest-attendees');
     });
 });

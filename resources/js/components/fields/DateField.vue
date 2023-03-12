@@ -47,9 +47,9 @@
 </template>
 
 <script>
-import DateSelector from "./DateField/DateSelector";
-import MonthSelector from "./DateField/MonthSelector";
 import { DateTime } from "luxon";
+import MonthSelector from "@/components/fields/DateField/MonthSelector.vue";
+import DateSelector from "@/components/fields/DateField/DateSelector.vue";
 
 export default {
   name: "DateField",
