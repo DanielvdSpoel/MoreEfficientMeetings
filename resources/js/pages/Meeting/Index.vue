@@ -5,13 +5,27 @@
                 Upcoming meetings
             </h1>
             <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                <div v-for="meeting in meetings" :key="meeting.id"  class="bg-white rounded-md p-2 gap-y-2">
-                    <div class="flex justify-center">
-                        <h2 class="leading font-medium text-sm">{{ meeting.title }}</h2>
+                <div v-for="meeting in meetings" :key="meeting.id"  class="bg-white rounded-md p-4">
+                    <h2 class="leading font-medium text-lg">{{ meeting.title }}</h2>
+                    <p class="italic text-gray-500">{{ meeting.description }}</p>
+                    <div class="mt-2">
+                        <div class="flex gap-2 mt-1">
+                            <i class="fa-regular fa-calendar-days text-primary-600 mt-0.5"></i>
+                            <p class="text-sm">{{ meeting.date }}</p>
+                        </div>
+                        <div class="flex gap-2 mt-1">
+                            <i class="fa-regular fa-clock text-primary-600 mt-0.5"></i>
+                            <p class="text-sm">{{ meeting.start_time }}</p>
+                        </div>
+                        <div class="flex gap-2 mt-1">
+                            <i class="fa-regular fa-hourglass text-primary-600 mt-0.5"></i>
+                            <p class="text-sm">{{ meeting.duration }} minutes</p>
+                        </div>
+                        <div class="flex gap-2 mt-1">
+                            <i class="fa-solid fa-users text-primary-600 mt-0.5"></i>
+                            <p class="text-sm">{{ meeting.attendees.length > 0 ? meeting.attendees.map(a => a.name).join(", ") : "No attendees"}}</p>
+                        </div>
                     </div>
-                    <p class="text-sm">Date: {{ meeting.date }}</p>
-                    <p class="text-sm">Time: {{ meeting.start_time }}</p>
-                    <p class="text-sm">Invited users: {{ meeting.attendees.map(a => a.name).join(", ") }}</p>
                 </div>
             </div>
         </template>
